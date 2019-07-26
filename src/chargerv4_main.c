@@ -36,7 +36,6 @@ void SiLabs_Startup (void)
     // Call hardware initialization routine
     enter_DefaultMode_from_RESET();
 
-
 //    WDTCN = 0xDE;
 //    WDTCN = 0xAD;
 
@@ -64,12 +63,13 @@ void go_idle(void) {
 int main (void)
 {
 
-//  if (RSTSRC & RSTSRC_WDTRSF__BMASK) {
-//      uart_send_str("System hang, warm reset\r\n");
-//  } else {
-      queue_init(); // initialize event queue
-      QUEUE_PUT(MSG_INIT);
-//  }
+  uart_send_str("i\n");
+
+  if (RSTSRC & RSTSRC_WDTRSF__BMASK) {
+      uart_send_str("wrst\r\n");
+  }
+  queue_init(); // initialize event queue
+  QUEUE_PUT(MSG_INIT);
 
   P1_B0 = 1;
 
@@ -85,7 +85,7 @@ int main (void)
       } else {
           clock_service(msg);
           if (msg == MSG_SECOND) {
-              P1_B0 = ~P1_B0;
+              P1_B3 = ~P1_B3;
           }
           uart_service(msg,QUEUE_GET_PARAM);
           adc_service(msg);

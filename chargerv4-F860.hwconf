@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ASCII"?>
-<device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="C8051F850-C-GU-QSOP" partId="mcu.8051.c8051.f850.c8051f850-c-gu" version="4.0.1" contextId="%DEFAULT%">
+<device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="C8051F860-C-GS-SOIC" partId="mcu.8051.c8051.f850.c8051f860-c-gs" version="4.0.1" contextId="%DEFAULT%">
   <mode name="DefaultMode">
     <property object="ADC_0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="ADC_0" propertyId="adc.accumulatorconfiguration.accumulatorshiftandjustify" value="Left justified"/>
     <property object="ADC_0" propertyId="adc.configuration.enable8bitmode" value="8-Bit mode"/>
     <property object="ADC_0" propertyId="adc.configuration.gaincontrol" value="1x gain"/>
     <property object="ADC_0" propertyId="adc.configuration.resolution" value="8-bit"/>
@@ -9,11 +10,14 @@
     <property object="ADC_0" propertyId="adc.configuration.sarclktarget" value="765000"/>
     <property object="ADC_0" propertyId="adc.configuration.sarclocksource" value="24.500 MHz"/>
     <property object="ADC_0" propertyId="adc.configuration.sysclk" value="24.500 MHz"/>
+    <property object="ADC_0" propertyId="adc.configuration.trackmode" value="Delayed tracking"/>
     <property object="ADC_0" propertyId="adc.control.enableadc" value="Enabled"/>
     <property object="ADC_0" propertyId="adc.control.timer0overflowfrequency" value="0 Hz"/>
     <property object="ADC_0" propertyId="adc.control.timer2overflowfrequency" value="0 Hz"/>
     <property object="ADC_0" propertyId="adc.control.timer3overflowfrequency" value="999.000 Hz"/>
     <property object="ADC_0" propertyId="adc.multiplexerselection.positiveinputselection" value="ADC0.0 (P0.0)"/>
+    <property object="ADC_0" propertyId="adc.powercontrol.selectbiaspower" value="Bias current mode 3 (SARCLK &lt;= 4 MHz)"/>
+    <property object="ADC_0" propertyId="adc.view.view" value="Advanced"/>
     <property object="CLOCK_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="CLOCK_0" propertyId="clock.clockselect.clocksourcedivider" value="SYSCLK / 1"/>
     <property object="CLOCK_0" propertyId="clock.clockselect.sysclk" value="24.500 MHz"/>
@@ -38,6 +42,7 @@
     <property object="P0.4" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P0.4" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P0.6" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
+    <property object="P0.6" propertyId="ports.settings.latch" value="Low"/>
     <property object="P0.6" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P0.7" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P0.7" propertyId="ports.settings.outputmode" value="Push-pull"/>
@@ -45,6 +50,8 @@
     <property object="P1.0" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P1.1" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.1" propertyId="ports.settings.outputmode" value="Push-pull"/>
+    <property object="P1.3" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
+    <property object="P1.3" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="PBCFG_0" propertyId="pbcfg.settings.enablecrossbar" value="Enabled"/>
     <property object="PMU_0" propertyId="pmu.powercontrol.selectidlemode" value="Enter idle mode"/>
     <property object="PMU_0" propertyId="pmu.powercontrol.selectstopmode" value="Enter stop mode"/>
@@ -105,7 +112,6 @@
     <property object="UART_0" propertyId="uart.serialportcontrol.enablereceive" value="Enabled"/>
     <property object="UART_0" propertyId="uart.serialportcontrol.timer1overflowfrequency" value="231.132 kHz"/>
     <property object="VREF_0" propertyId="ABPeripheral.included" value="true"/>
-    <property object="VREF_0" propertyId="vref.voltagereferencecontrol.internalvoltagereferencelevel" value="2.4 V"/>
     <property object="VREF_0" propertyId="vref.voltagereferencecontrol.selectvoltagereference" value="VDD pin"/>
     <property object="WDT_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="WDT_0" propertyId="wdt.watchdogcontrol.wdtcount" value="2"/>

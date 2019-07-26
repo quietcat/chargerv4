@@ -64,7 +64,7 @@ void uart_send_str(char * s) {
         }
         if ( new_head == uart_tx_queue_tail ) {
             uart_tx_queue_full = 1;
-            uart_tx_queue[uart_tx_queue_head] = "ERROR: TX queue overrun, message(s) lost\r\n";
+//            uart_tx_queue[uart_tx_queue_head] = "ERROR: TX queue overrun, message(s) lost\r\n";
         } else {
             uart_tx_queue[uart_tx_queue_head] = s;
         }

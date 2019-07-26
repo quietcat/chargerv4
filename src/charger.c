@@ -98,6 +98,7 @@ void charger_service(char msg) {
                     print_cal();
                     uart_send_str("   Idle\r\n");
                     cstate = ST_IDLE;
+                    BULK_OFF;
                     break;
                 case ST_IDLE:
                     if ( batn_value > NEG_ACTIVE_VOLTAGE ) {
@@ -131,6 +132,7 @@ void charger_service(char msg) {
                     break;
                 case ST_BULK_1:
                     if ( volt_value >= idle_voltage ) {
+                        print_data2();
                         charger_go_idle();
                     }
                     break;
@@ -138,6 +140,8 @@ void charger_service(char msg) {
                     if ( volt_value >= idle_voltage ) {
                         charger_go_idle();
                     }
+                    break;
+                case ST_MANUAL:
                     break;
                 default:
                     BULK_OFF;
@@ -261,6 +265,7 @@ void charger_service(char msg) {
             }
             break;
         case MSG_INIT:
+            BULK_OFF;
             uart_send_str("\r# NiCd/NiMH Charger v4.0.0 #\r\n");
             cstate = ST_STARTUP;
             break;

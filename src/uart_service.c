@@ -45,6 +45,29 @@ extern void uart_service(char msg, char param) {
                     BULK_OFF;
                     uart_send_str("Sim idle\r\n");
                     break;
+                case 'b':
+                    BULK_CTL = ~BULK_CTL;
+                    if (BULK_CTL) {
+                        uart_send_str("Sim bulk on\r\n");
+                    } else {
+                        uart_send_str("Sim bulk off\r\n");
+                    }
+                    break;
+                case 'a':
+                    print_data2();
+                    uart_send_str("\r\n");
+                    break;
+                case 'm':
+                    if (cstate == ST_MANUAL) {
+                        uart_send_str("Manual off\r\n");
+                        cstate = ST_IDLE;
+                    } else if (cstate == ST_IDLE) {
+                        uart_send_str("Manual on\r\n");
+                        cstate = ST_MANUAL;
+                    } else {
+                        uart_send_str("Go idle first\r\n");
+                    }
+                    break;
                 default:
                     uart_send_str(ch_buf);
                     break;

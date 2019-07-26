@@ -6,7 +6,47 @@
 // or they will be overwritten!
 //=========================================================
 
-// USER INCLUDES
-#include <SI_C8051F850_Register_Enums.h>
+//-----------------------------------------------------------------------------
+// UART0_ISR
+//-----------------------------------------------------------------------------
+//
+// UART0 ISR Content goes here. Remember to clear flag bits:
+// SCON0::RI (Receive Interrupt Flag)
+// SCON0::TI (Transmit Interrupt Flag)
+//
+//-----------------------------------------------------------------------------
+INTERRUPT (UART0_ISR, UART0_IRQn)
+{
+
+}
+
+
+//-----------------------------------------------------------------------------
+// ADC0EOC_ISR
+//-----------------------------------------------------------------------------
+//
+// ADC0EOC ISR Content goes here. Remember to clear flag bits:
+// ADC0CN0::ADINT (Conversion Complete Interrupt Flag)
+//
+//-----------------------------------------------------------------------------
+INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
+{
+
+}
+
+
+//-----------------------------------------------------------------------------
+// TIMER3_ISR
+//-----------------------------------------------------------------------------
+//
+// TIMER3 ISR Content goes here. Remember to clear flag bits:
+// TMR3CN::TF3H (Timer # High Byte Overflow Flag)
+// TMR3CN::TF3L (Timer # Low Byte Overflow Flag)
+//
+//-----------------------------------------------------------------------------
+INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
+{
+
+}
 
 

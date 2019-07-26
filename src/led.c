@@ -130,6 +130,18 @@ void led_service(unsigned char msg) {
                 case 50: LED_OFF; break;
                 }
                 break;
+            case ST_MANUAL:
+                switch (hundredths) {
+                case  0: BULK_CTL ? LEDR_ON : LEDG_ON; break;
+                case 10: LED_OFF; break;
+                case 25: BULK_CTL ? LEDR_ON : LEDG_ON; break;
+                case 35: LED_OFF; break;
+                case 50: BULK_CTL ? LEDR_ON : LEDG_ON; break;
+                case 60: LED_OFF; break;
+                case 75: BULK_CTL ? LEDR_ON : LEDG_ON; break;
+                case 85: LED_OFF; break;
+                }
+                break;
             case ST_ERROR:
                 switch (hundredths) {
                 case  0:

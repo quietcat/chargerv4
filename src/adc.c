@@ -28,16 +28,16 @@ void adc_service(msg) {
         case MSG_ADC0EOC:
             switch (ADC0MX & ADC0MX_ADC0MX__FMASK) {
             case ADC0MX_ADC0MX__ADC0P0:
-                temp_value = ADC0L;
+                temp_value = ADC0H;
                 ADC0MX = ADC0MX_ADC0MX__ADC0P1;
                 break;
             case ADC0MX_ADC0MX__ADC0P1:
-                volt_value = ADC0L;
+                volt_value = ADC0H;
                 ADC0MX = ADC0MX_ADC0MX__ADC0P2;
                 QUEUE_PUT(MSG_VOLTAGE);
                 break;
             case ADC0MX_ADC0MX__ADC0P2:
-                batn_value = ADC0L;
+                batn_value = ADC0H;
                 ADC0MX = ADC0MX_ADC0MX__ADC0P0;
                 break;
             default:

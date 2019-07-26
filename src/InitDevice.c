@@ -35,7 +35,20 @@ extern void enter_DefaultMode_from_RESET(void) {
 }
 
 extern void PORTS_0_enter_DefaultMode_from_RESET(void) {
+
     // $[P0 - Port 0 Pin Latch]
+    /***********************************************************************
+     - P0.0 is high. Set P0.0 to drive or float high
+     - P0.1 is high. Set P0.1 to drive or float high
+     - P0.2 is high. Set P0.2 to drive or float high
+     - P0.3 is high. Set P0.3 to drive or float high
+     - P0.4 is high. Set P0.4 to drive or float high
+     - P0.5 is high. Set P0.5 to drive or float high
+     - P0.6 is low. Set P0.6 to drive low
+     - P0.7 is high. Set P0.7 to drive or float high
+     ***********************************************************************/
+    P0 = P0_B0__HIGH | P0_B1__HIGH | P0_B2__HIGH | P0_B3__HIGH | P0_B4__HIGH
+            | P0_B5__HIGH | P0_B6__LOW | P0_B7__HIGH;
     // [P0 - Port 0 Pin Latch]$
 
     // $[P0MDOUT - Port 0 Output Mode]
@@ -97,6 +110,7 @@ extern void PORTS_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void PBCFG_0_enter_DefaultMode_from_RESET(void) {
+
     // $[XBR0 - Port I/O Crossbar 0]
     /***********************************************************************
      - UART TX, RX routed to Port pins P0.4 and P0.5
@@ -130,6 +144,7 @@ extern void PBCFG_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void WDT_0_enter_DefaultMode_from_RESET(void) {
+
     // $[Watchdog Timer Init Variable Declarations]
     uint32_t i;
     bool ea;
@@ -161,6 +176,7 @@ extern void WDT_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void ADC_0_enter_DefaultMode_from_RESET(void) {
+
     // $[ADC0GTH - ADC0 Greater-Than High Byte]
     // [ADC0GTH - ADC0 Greater-Than High Byte]$
 
@@ -174,6 +190,14 @@ extern void ADC_0_enter_DefaultMode_from_RESET(void) {
     // [ADC0LTL - ADC0 Less-Than Low Byte]$
 
     // $[ADC0PWR - ADC0 Power Control]
+    /***********************************************************************
+     - Burst Mode Power Up Time = 0x0F
+     - Disable low power mode
+     - Low power mode disabled
+     - Select bias current mode 3 
+     ***********************************************************************/
+    ADC0PWR = (0x0F << ADC0PWR_ADPWR__SHIFT) | ADC0PWR_ADLPM__LP_BUFFER_DISABLED
+            | ADC0PWR_ADMXLP__LP_MUX_VREF_DISABLED | ADC0PWR_ADBIAS__MODE3;
     // [ADC0PWR - ADC0 Power Control]$
 
     // $[ADC0TK - ADC0 Burst Mode Track Time]
@@ -187,6 +211,15 @@ extern void ADC_0_enter_DefaultMode_from_RESET(void) {
     // [ADC0MX - ADC0 Multiplexer Selection]$
 
     // $[ADC0AC - ADC0 Accumulator Configuration]
+    /***********************************************************************
+     - Left justified. No shifting applied
+     - Disable 12-bit mode
+     - ADC0H:ADC0L contain the result of the latest conversion when Burst
+     Mode is disabled
+     - Perform and Accumulate 1 conversion 
+     ***********************************************************************/
+    ADC0AC = ADC0AC_ADSJST__LEFT_NO_SHIFT | ADC0AC_AD12BE__12_BIT_DISABLED
+            | ADC0AC_ADAE__ACC_DISABLED | ADC0AC_ADRPT__ACC_1;
     // [ADC0AC - ADC0 Accumulator Configuration]$
 
     // $[ADC0CF - ADC0 Configuration]
@@ -194,10 +227,10 @@ extern void ADC_0_enter_DefaultMode_from_RESET(void) {
      - SAR Clock Divider = 0x1F
      - ADC0 operates in 8-bit mode
      - The on-chip PGA gain is 1
-     - Normal Track Mode
+     - Delayed Track Mode
      ***********************************************************************/
     ADC0CF = (0x1F << ADC0CF_ADSC__SHIFT) | ADC0CF_AD8BE__8_BIT
-            | ADC0CF_ADGN__GAIN_1 | ADC0CF_ADTM__TRACK_NORMAL;
+            | ADC0CF_ADGN__GAIN_1 | ADC0CF_ADTM__TRACK_DELAYED;
     // [ADC0CF - ADC0 Configuration]$
 
     // $[ADC0CN1 - ADC0 Control 1]
@@ -213,6 +246,7 @@ extern void ADC_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void TIMER16_3_enter_DefaultMode_from_RESET(void) {
+
     // $[Timer Initialization]
     // Save Timer Configuration
     U8 TMR3CN_TR3_save;
@@ -259,6 +293,7 @@ extern void TIMER16_3_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void TIMER_SETUP_0_enter_DefaultMode_from_RESET(void) {
+
     // $[CKCON - Clock Control]
     /***********************************************************************
      - System clock divided by 12
@@ -298,6 +333,7 @@ extern void TIMER_SETUP_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void UART_0_enter_DefaultMode_from_RESET(void) {
+
     // $[SCON0 - UART0 Serial Port Control]
     /***********************************************************************
      - UART0 reception enabled
@@ -308,20 +344,22 @@ extern void UART_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void VREF_0_enter_DefaultMode_from_RESET(void) {
+
     // $[REF0CN - Voltage Reference Control]
     /***********************************************************************
      - The ADC0 voltage reference is the VDD pin
-     - The internal reference operates at 2.4 V nominal
+     - The internal reference operates at 1.65 V nominal
      - The ADC0 ground reference is the GND pin
      - Disable the Temperature Sensor
      ***********************************************************************/
-    REF0CN = REF0CN_REFSL__VDD_PIN | REF0CN_IREFLVL__2P4 | REF0CN_GNDSL__GND_PIN
-            | REF0CN_TEMPE__TEMP_DISABLED;
+    REF0CN = REF0CN_REFSL__VDD_PIN | REF0CN_IREFLVL__1P65
+            | REF0CN_GNDSL__GND_PIN | REF0CN_TEMPE__TEMP_DISABLED;
     // [REF0CN - Voltage Reference Control]$
 
 }
 
 extern void INTERRUPT_0_enter_DefaultMode_from_RESET(void) {
+
     // $[EIE1 - Extended Interrupt Enable 1]
     /***********************************************************************
      - Enable interrupt requests generated by the ADINT flag
@@ -363,6 +401,7 @@ extern void INTERRUPT_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
+
     // $[Timer Initialization]
     //Save Timer Configuration
     U8 TCON_save;
@@ -397,6 +436,7 @@ extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
+
     // $[CLKSEL - Clock Select]
     /***********************************************************************
      - Clock derived from the Internal High-Frequency Oscillator
@@ -408,17 +448,11 @@ extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
 }
 
 extern void PMU_0_enter_DefaultMode_from_RESET(void) {
-    // $[PCON - Power Control]
-    /***********************************************************************
-     - CPU goes into Idle mode 
-     - CPU goes into Stop mode 
-     ***********************************************************************/
-    PCON = PCON_IDLE__IDLE | PCON_STOP__STOP;
-    // [PCON - Power Control]$
 
 }
 
 extern void PORTS_1_enter_DefaultMode_from_RESET(void) {
+
     // $[P1 - Port 1 Pin Latch]
     // [P1 - Port 1 Pin Latch]$
 
@@ -427,16 +461,10 @@ extern void PORTS_1_enter_DefaultMode_from_RESET(void) {
      - P1.0 output is push-pull
      - P1.1 output is push-pull
      - P1.2 output is open-drain
-     - P1.3 output is open-drain
-     - P1.4 output is open-drain
-     - P1.5 output is open-drain
-     - P1.6 output is open-drain
-     - P1.7 output is open-drain
+     - P1.3 output is push-pull
      ***********************************************************************/
     P1MDOUT = P1MDOUT_B0__PUSH_PULL | P1MDOUT_B1__PUSH_PULL
-            | P1MDOUT_B2__OPEN_DRAIN | P1MDOUT_B3__OPEN_DRAIN
-            | P1MDOUT_B4__OPEN_DRAIN | P1MDOUT_B5__OPEN_DRAIN
-            | P1MDOUT_B6__OPEN_DRAIN | P1MDOUT_B7__OPEN_DRAIN;
+            | P1MDOUT_B2__OPEN_DRAIN | P1MDOUT_B3__PUSH_PULL;
     // [P1MDOUT - Port 1 Output Mode]$
 
     // $[P1MDIN - Port 1 Input Mode]

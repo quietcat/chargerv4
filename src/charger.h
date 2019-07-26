@@ -21,9 +21,11 @@ SBIT(BULK_CTL,SFR_P0,6);
 #define ST_STARTUP  7
 #define ST_TOO_HOT  8
 #define ST_CAL      9
+#define ST_MANUAL   10
 extern char cstate;
 
 void charger_service(char msg);
+void print_data2(void);
 
 #undef TEMP_SENSOR_5K
 
