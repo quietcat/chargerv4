@@ -12,6 +12,6 @@ extern unsigned char temp_value;
 extern unsigned char volt_value;
 extern unsigned char batn_value;
 
-void adc_service(msg);
+void adc_service(char msg);
 
 #endif /* ADC_H_ */

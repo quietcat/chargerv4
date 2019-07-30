@@ -95,7 +95,7 @@ void charger_service(char msg) {
                 case ST_CAL:
                     idle_voltage = volt_value - volt_value / 8;
                     trickle_diff = volt_value / 4;
-                    print_cal();
+//                    print_cal();
                     uart_send_str("   Idle\r\n");
                     cstate = ST_IDLE;
                     BULK_OFF;
