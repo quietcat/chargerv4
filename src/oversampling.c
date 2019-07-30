@@ -72,7 +72,7 @@ void oversampling_service(char msg) {
     switch (msg) {
     case MSG_SECOND:
         period_counter = get_next_interval();
-        sample_counter = SAMPLE_COUNT;
+        sample_counter = SAMPLE_COUNT-1; // will double up the last sample to make up
         oversampled_voltage_accum = 0;
         break;
     case MSG_VOLTAGE:
@@ -83,6 +83,7 @@ void oversampling_service(char msg) {
                 sample_counter--;
                 oversampled_voltage_accum += volt_value;
                 if (sample_counter == 0) {
+                    oversampled_voltage_accum += volt_value; // make up one sample
                     oversampled_voltage = oversampled_voltage_accum;
                     QUEUE_PUT(MSG_OVSVOLT)
                 }

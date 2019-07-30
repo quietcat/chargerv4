@@ -8,18 +8,22 @@
 
 #include "msg_codes.h"
 #include "oversampling.h"
-#include "convert.h"
 #include "uart.h"
 #include "reporting.h"
 
-#define VMAX_3V3 (BASE*3 + BASE*3/10)
-
 void reporting_service(char msg) {
     switch(msg) {
+    case MSG_INIT: {
+    	uart_send_str("VREF: ");
+        uart_send_str(fptoa(VREF,3));
+        uart_send_str("V\r\n");
+    	break;
+    }
     case MSG_5SECOND: {
-        uint16_t vfix = ufixmult(VMAX_3V3, oversampled_voltage >> (sizeof(short)*8-FRACTION_BITS));
-        uart_send_str(fptoa(vfix));
-        uart_send_str("\r\n");
+        uint16_t vfix = ufixmult(VREF, oversampled_voltage >> (INT_BITS));
+        uart_send_str("B+: ");
+        uart_send_str(fptoa(vfix,3));
+        uart_send_str("V\r\n");
         break;
     }
     }

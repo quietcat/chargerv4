@@ -8,6 +8,10 @@
 #ifndef REPORTING_H_
 #define REPORTING_H_
 
+#include "convert.h"
+
+#define VREF (FRAC_BASE*3 + (FRAC_BASE*3)/10)
+
 void reporting_service(char msg);
 
 #endif /* REPORTING_H_ */
