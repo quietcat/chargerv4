@@ -10,7 +10,7 @@
 
 #include "convert.h"
 
-#define VREF (FRAC_BASE*3 + (FRAC_BASE*3)/10)
+#define VREF (FRAC_BASE*3 + (FRAC_BASE*3.0)/10.0)
 
 void reporting_service(char msg);
 

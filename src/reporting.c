@@ -15,14 +15,18 @@ void reporting_service(char msg) {
     switch(msg) {
     case MSG_INIT: {
     	uart_send_str("VREF: ");
-        uart_send_str(fptoa(VREF,3));
+        uart_send_str(uitoh(VREF));
+        uart_send_str(" ");
+        uart_send_str(fptoa(VREF));
         uart_send_str("V\r\n");
     	break;
     }
     case MSG_5SECOND: {
         uint16_t vfix = ufixmult(VREF, oversampled_voltage >> (INT_BITS));
         uart_send_str("B+: ");
-        uart_send_str(fptoa(vfix,3));
+        uart_send_str(uitoa(oversampled_voltage));
+        uart_send_str(" ");
+        uart_send_str(fptoa(vfix));
         uart_send_str("V\r\n");
         break;
     }

@@ -4,7 +4,7 @@
 #include <compiler_defs.h>
 #include "convert.h"
 
-#define RING_BUFFER_SIZE 48
+#define RING_BUFFER_SIZE 32
 uint8_t SEG_IDATA ring_buffer[RING_BUFFER_SIZE];
 uint8_t ring_buffer_pos = 0;
 
@@ -45,51 +45,41 @@ uint8_t * uitoh(uint16_t v) {
         ring_buffer_pos = sz;
     }
     {
-        uint8_t i;
+        uint8_t i = pos+sz-1;
         uint8_t d;
-        ring_buffer[i] = 0;
-        for (d = 4, i = pos+sz-1; d > 0; i--, d--) {
+        ring_buffer[i--] = 0;
+        for (d = 4; d > 0; i--, d--) {
             uint8_t digit = v % 16;
             if (digit < 10) {
-                ring_buffer[--i] = digit + '0';
+                ring_buffer[i] = digit + '0';
             } else {
-                ring_buffer[--i] = digit-10 + 'A';
+                ring_buffer[i] = digit-10 + 'A';
             }
             v /= 16;
-        } while (v);
+        };
     }
     return &ring_buffer[pos];
 }
 
-uint8_t * fptoa(uint16_t v, uint8_t decimal_digits) {
+uint8_t * fptoa(uint16_t v) {
     uint8_t pos = ring_buffer_pos;
-    uint16_t decimal_base = 10000;
     uint16_t int_part = (v >> FRAC_BITS);
-    uint8_t sz = 6; // #.####
-    switch (decimal_digits) {
-      case 0: decimal_base = 1; sz = 1; break; // just the int part
-      case 1: decimal_base = 10; sz = 3; break; // #.#
-      case 2: decimal_base = 100; sz = 4; break; // #.##
-      case 3: decimal_base = 1000; sz = 5; break; // #.###
-      default: decimal_digits = 4;
-    }
-    if (int_part > 999) sz += 3;
-    else if (int_part > 99) sz += 2;
-    else if (int_part > 9) sz += 1;
-    sz++; // zero char
+    uint8_t sz = 7; // #.####
+    uint32_t accum = (v & FRAC_MASK);
+    accum *= 10000;
+    accum /= FRAC_BASE;
     ring_buffer_pos += sz;
     if (ring_buffer_pos >= RING_BUFFER_SIZE) {
         pos = 0;
         ring_buffer_pos = sz;
     }
     {
-        uint8_t i;
+        uint8_t i = pos+sz-1;
         uint8_t d;
-        uint16_t frac = ((uint32_t)(v & FRAC_MASK) * (uint32_t)decimal_base) / (uint32_t)FRAC_BASE;
         ring_buffer[i--] = 0;
-        for (d = decimal_digits, i = pos+sz-1; d > 0; d--, i--) {
-            ring_buffer[i] = (frac % 10) + '0';
-            frac /= 10;
+        for (d = 4; d > 0; d--, i--) {
+            ring_buffer[i] = (accum % 10) + '0';
+            accum /= 10;
         }
         ring_buffer[i--] = '.';
         ring_buffer[i] = int_part + '0';

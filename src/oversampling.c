@@ -84,7 +84,7 @@ void oversampling_service(char msg) {
                 oversampled_voltage_accum += volt_value;
                 if (sample_counter == 0) {
                     oversampled_voltage_accum += volt_value; // make up one sample
-                    oversampled_voltage = oversampled_voltage_accum;
+                    oversampled_voltage = oversampled_voltage_accum + SAMPLE_COUNT/2; // compensate for ADC middle of sample error
                     QUEUE_PUT(MSG_OVSVOLT)
                 }
             }

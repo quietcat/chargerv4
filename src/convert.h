@@ -21,7 +21,7 @@ uint16_t ufixmult(uint16_t o1, uint16_t o2);
 char * uctoa(unsigned char c);
 char * uitoa(unsigned int v);
 uint8_t * uitoh(uint16_t v);
-uint8_t * fptoa(uint16_t v, uint8_t decimal_digits);
+uint8_t * fptoa(uint16_t v);
 extern unsigned char ring_buffer_pos;
 
 #endif
