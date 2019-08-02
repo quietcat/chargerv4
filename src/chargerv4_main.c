@@ -19,6 +19,7 @@
 #include "oversampling.h"
 #include "charger.h"
 #include "led.h"
+#include "buffer.h"
 
 // $[Generated Includes]
 // [Generated Includes]$
@@ -63,10 +64,10 @@ void go_idle(void) {
 int main (void)
 {
 
-  uart_send_str("i\n");
+  P("i\n");
 
   if (RSTSRC & RSTSRC_WDTRSF__BMASK) {
-      uart_send_str("wrst\r\n");
+      P("wrst\r\n");
   }
   queue_init(); // initialize event queue
   QUEUE_PUT(MSG_INIT);
