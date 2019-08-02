@@ -5,7 +5,7 @@
  *      Author: denis
  */
 
-
+#include <compiler_defs.h>
 #include "msg_codes.h"
 #include "oversampling.h"
 #include "uart.h"
@@ -28,6 +28,7 @@ void reporting_service(char msg) {
         uart_send_str(" ");
         uart_send_str(fptoa(vfix));
         uart_send_str("V\r\n");
+        NOP();
         break;
     }
     }

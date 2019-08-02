@@ -61,13 +61,18 @@ uint8_t * uitoh(uint16_t v) {
     return &ring_buffer[pos];
 }
 
+uint32_t accum;
+bit rounding;
+
 uint8_t * fptoa(uint16_t v) {
     uint8_t pos = ring_buffer_pos;
     uint16_t int_part = (v >> FRAC_BITS);
     uint8_t sz = 7; // #.####
-    uint32_t accum = (v & FRAC_MASK);
+    accum = (v & FRAC_MASK);
     accum *= 10000;
+    rounding = (accum & FRAC_MSB);
     accum /= FRAC_BASE;
+    if (rounding) accum ++;
     ring_buffer_pos += sz;
     if (ring_buffer_pos >= RING_BUFFER_SIZE) {
         pos = 0;
@@ -88,17 +93,12 @@ uint8_t * fptoa(uint16_t v) {
 }
 
 uint16_t ufixmult(uint16_t o1, uint16_t o2) {
-  two_shorts truncater;
-
-  truncater.integer_part = ((uint32_t)o1 * (uint32_t)o2);
-  // if fractional part >= 0.5, need to round up
-  if (truncater.integer_part & FRAC_MSB) {
-      truncater.integer_part >>= FRAC_BITS; // divide by BASE
-      truncater.integer_part += 1; // rounding bit
-  } else {
-      truncater.integer_part >>= FRAC_BITS; // divide by BASE
-  }
-  return truncater.short_part[1]; // assume little-endian
+    accum = o1;
+    accum *= o2;
+    rounding = (accum & FRAC_MSB);
+    accum >>= FRAC_BITS;
+    if (rounding) accum ++;
+    return accum;
 }
 
 #if 0
