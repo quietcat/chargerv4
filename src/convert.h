@@ -11,17 +11,11 @@
 #define INT_MASK (~FRAC_MASK)
 #define INT_BITS (16-FRAC_BITS)
 
-typedef union {
-   uint32_t integer_part;
-   uint16_t short_part[2];
-} two_shorts;
-
-uint16_t ufixmult(uint16_t o1, uint16_t o2);
+unsigned int ufixmult(unsigned int o1, unsigned int o2);
 
 char * uctoa(unsigned char c);
 char * uitoa(unsigned int v);
-uint8_t * uitoh(uint16_t v);
-uint8_t * fptoa(uint16_t v);
-extern unsigned char ring_buffer_pos;
+char * uitoh(unsigned int v);
+char * fptoa(unsigned int v);
 
 #endif

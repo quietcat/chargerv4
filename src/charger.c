@@ -12,6 +12,7 @@
 #include "adc.h"
 #include "convert.h"
 #include "uart.h"
+#include "buffer.h"
 #include "charger.h"
 #include "cal.h"
 
@@ -43,43 +44,41 @@ unsigned char temp_deglitch_counter = 0;
 
 void print_data(void) {
 #if defined(TEMP_SENSOR_5K)
-    uart_send_str("T: ");
-    uart_send_str(uitoa(temp_value));
-    uart_send_str(" Tmax: ");
-    uart_send_str(uitoa(max_temp));
+    P("T: ");Pi(temp_value);
+    P(" Tmax: ");Pi(max_temp);
 #endif
-    uart_send_str(" V: ");
-    uart_send_str(uitoa(oversampled_voltage));
-    uart_send_str(" V*99.5%: ");
-    uart_send_str(uitoa(max_voltage_995));
-    uart_send_str(" Vmax: ");
-    uart_send_str(uitoa(max_voltage));
+    P(" V: ");
+    Pi(oversampled_voltage);
+    P(" V*99.5%: ");
+    Pi(max_voltage_995);
+    P(" Vmax: ");
+    Pi(max_voltage);
 }
 
 void print_data2(void) {
-    uart_send_str("B+: ");
-    uart_send_str(uitoa(volt_value));
-    uart_send_str(" B-: ");
-    uart_send_str(uitoa(batn_value));
+    P("B+: ");
+    Pi(volt_value);
+    P(" B-: ");
+    Pi(batn_value);
 }
 
 void print_cal(void) {
-    uart_send_str(    "Delta T         : ");
-    uart_send_str(uitoa(cal->deltaT));
-    uart_send_str("\r\nMax bulk min    : ");
-    uart_send_str(uitoa(cal->maxTimeBulk));
-    uart_send_str("\r\nMax trickle min : ");
-    uart_send_str(uitoa(cal->maxTimeTrickle));
-    uart_send_str("\r\nMax min @ max V : ");
-    uart_send_str(uitoa(cal->maxTimeAtMaxV));
-    uart_send_str("\r\nTemp hot thr    : ");
-    uart_send_str(uitoa(cal->tempHotThr));
-    uart_send_str("\r\n");
+    P(    "Delta T         : ");
+    Pi(cal->deltaT);
+    P("\r\nMax bulk min    : ");
+    Pi(cal->maxTimeBulk);
+    P("\r\nMax trickle min : ");
+    Pi(cal->maxTimeTrickle);
+    P("\r\nMax min @ max V : ");
+    Pi(cal->maxTimeAtMaxV);
+    P("\r\nTemp hot thr    : ");
+    Pi(cal->tempHotThr);
+    P("\r\n");
 }
 
 void charger_go_idle(void) {
     print_data();
-    uart_send_str("   Go idle\r\n");
+    P("   Go idle\r\n");
     cstate = ST_IDLE;
     BULK_OFF;
 }
@@ -89,21 +88,21 @@ void charger_service(char msg) {
         case MSG_SECOND:
             switch (cstate) {
                 case ST_STARTUP:
-                    uart_send_str("   Calibration\r\n");
+                    P("   Calibration\r\n");
                     cstate = ST_CAL;
                     break;
                 case ST_CAL:
                     idle_voltage = volt_value - volt_value / 8;
                     trickle_diff = volt_value / 4;
-//                    print_cal();
-                    uart_send_str("   Idle\r\n");
+                    print_cal();
+                    P("   Idle\r\n");
                     cstate = ST_IDLE;
                     BULK_OFF;
                     break;
                 case ST_IDLE:
                     if ( batn_value > NEG_ACTIVE_VOLTAGE ) {
                         print_data();
-                        uart_send_str("   Start trickle\r\n");
+                        P("   Start trickle\r\n");
                         cstate = ST_TRICKLE;
                         charging_minutes = 0;
                         QUEUE_PUT(MSG_CLK_RST);
@@ -116,7 +115,7 @@ void charger_service(char msg) {
                     }
                     if ( volt_value-batn_value >= trickle_diff ) {
                         print_data();
-                        uart_send_str("   Initial bulk charge\r\n");
+                        P("   Initial bulk charge\r\n");
                         cstate = ST_BULK_1;
                         charging_minutes = 0;
                         set_timer(MSG_TIMER_0,5); // at least 5 seconds of bulk charging
@@ -161,7 +160,7 @@ void charger_service(char msg) {
                 }
 #if defined(TEMP_SENSOR_5K)
                 if (temp_value <= cal->tempHotThr) {
-                    uart_send_str("    Battery too hot, stopping charge\r\n");
+                    P("    Battery too hot, stopping charge\r\n");
                     cstate = ST_TOO_HOT;
                     charging_minutes = 0;
                     break;
@@ -173,17 +172,17 @@ void charger_service(char msg) {
                     max_temp = temp_value;
                 } else if (temp_value < max_temp - cal->deltaT) {
                     temp_deglitch_counter += 10;
-                    uart_send_str("   Temp neg delta trip\r\n");
+                    P("   Temp neg delta trip\r\n");
                 }
                 if (temp_deglitch_counter > TEMP_DEGLITCH_COUNTER_MAX) {
-                    uart_send_str("   Full - temp sensor\r\n");
+                    P("   Full - temp sensor\r\n");
                     cstate = ST_FULL;
                     BULK_OFF;
                     break;
                 }
 #endif
                 if (volt_deglitch_counter > VOLT_DEGLITCH_COUNTER_MAX) {
-                    uart_send_str("   Full - negative delta V\r\n");
+                    P("   Full - negative delta V\r\n");
                     cstate = ST_FULL;
                     BULK_OFF;
                     break;
@@ -194,7 +193,7 @@ void charger_service(char msg) {
                     max_voltage_995 = max_voltage - max_voltage / 200; // 99.5%
                 } else if (oversampled_voltage < max_voltage_995) {
                     volt_deglitch_counter += 10;
-                    uart_send_str("   Volt neg delta trip\r\n");
+                    P("   Volt neg delta trip\r\n");
                 }
                 break;
             }
@@ -204,27 +203,27 @@ void charger_service(char msg) {
                 case ST_TRICKLE:
                     print_data();
                     if ( ++charging_minutes == cal->maxTimeTrickle ) {
-                        uart_send_str("   Error: trickle charge time exceeded, battery may be faulty\r\n");
+                        P("   Error: trickle charge time exceeded, battery may be faulty\r\n");
                         cstate = ST_ERROR;
                     } else {
-                        uart_send_str("   ");
-                        uart_send_str(uitoa(charging_minutes));
-                        uart_send_str(" min trickle\r\n");
+                        P("   ");
+                        Pi(charging_minutes);
+                        P(" min trickle\r\n");
                     }
                     break;
                 case ST_BULK_2:
                     print_data();
                     if ( ++charging_minutes == cal->maxTimeBulk ) {
-                        uart_send_str("   Maximum bulk charge time reached\r\n");
+                        P("   Maximum bulk charge time reached\r\n");
                         cstate = ST_FULL;
                         BULK_OFF;
                     } else {
-                        uart_send_str("   ");
-                        uart_send_str(uitoa(charging_minutes));
-                        uart_send_str(" min bulk\r\n");
+                        P("   ");
+                        Pi(charging_minutes);
+                        P(" min bulk\r\n");
                     }
                     if ( ++minutes_at_max_voltage == cal->maxTimeAtMaxV) {
-                        uart_send_str("   Full after max minutes at max voltage\r\n");
+                        P("   Full after max minutes at max voltage\r\n");
                         cstate = ST_FULL;
                         BULK_OFF;
                     }
@@ -232,15 +231,15 @@ void charger_service(char msg) {
                 case ST_TOO_HOT:
                     print_data();
                     if ( ++charging_minutes == COOL_DOWN_MINUTES) {
-                        uart_send_str("    Cool down period ended\r\n");
+                        P("    Cool down period ended\r\n");
                         charger_go_idle();
                     } else {
-                        uart_send_str("    Cooling down\r\n");
+                        P("    Cooling down\r\n");
                     }
                     break;
                 case ST_IDLE:
                     print_data();
-                    uart_send_str("   Idle, waiting\r\n");
+                    P("   Idle, waiting\r\n");
                     break;
             }
             break;
@@ -255,18 +254,18 @@ void charger_service(char msg) {
 #if defined(TEMP_SENSOR_5K)
                     temp_deglitch_counter = 0;
                     if (temp_value >= TEMP_SENSOR_OK) {
-                        uart_send_str("   Temp sensor fault\r\n");
+                        P("   Temp sensor fault\r\n");
                     }
 #endif
                     print_data();
-                    uart_send_str("   Begin bulk charge\r\n");
+                    P("   Begin bulk charge\r\n");
                     cstate = ST_BULK_2;
                     break;
             }
             break;
         case MSG_INIT:
             BULK_OFF;
-            uart_send_str("\r# NiCd/NiMH Charger v4.0.0 #\r\n");
+            P("\r# NiCd/NiMH Charger v4.0.0 #\r\n");
             cstate = ST_STARTUP;
             break;
     }
