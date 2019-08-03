@@ -6,8 +6,9 @@
     <property object="ADC_0" propertyId="adc.configuration.enable8bitmode" value="8-Bit mode"/>
     <property object="ADC_0" propertyId="adc.configuration.gaincontrol" value="1x gain"/>
     <property object="ADC_0" propertyId="adc.configuration.resolution" value="8-bit"/>
-    <property object="ADC_0" propertyId="adc.configuration.sarclkactual" value="765.625 kHz"/>
+    <property object="ADC_0" propertyId="adc.configuration.sarclkactual" value="3.500 MHz"/>
     <property object="ADC_0" propertyId="adc.configuration.sarclktarget" value="765000"/>
+    <property object="ADC_0" propertyId="adc.configuration.sarclockdivider" value="6"/>
     <property object="ADC_0" propertyId="adc.configuration.sarclocksource" value="24.500 MHz"/>
     <property object="ADC_0" propertyId="adc.configuration.sysclk" value="24.500 MHz"/>
     <property object="ADC_0" propertyId="adc.configuration.trackmode" value="Delayed tracking"/>
@@ -52,6 +53,8 @@
     <property object="P1.1" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P1.3" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.3" propertyId="ports.settings.outputmode" value="Push-pull"/>
+    <property object="P2.0" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
+    <property object="P2.0" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="PBCFG_0" propertyId="pbcfg.settings.enablecrossbar" value="Enabled"/>
     <property object="PMU_0" propertyId="pmu.powercontrol.selectidlemode" value="Enter idle mode"/>
     <property object="PMU_0" propertyId="pmu.powercontrol.selectstopmode" value="Enter stop mode"/>

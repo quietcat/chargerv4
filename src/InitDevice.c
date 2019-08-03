@@ -22,6 +22,7 @@ extern void enter_DefaultMode_from_RESET(void) {
     CLOCK_0_enter_DefaultMode_from_RESET();
     PORTS_0_enter_DefaultMode_from_RESET();
     PORTS_1_enter_DefaultMode_from_RESET();
+    PORTS_2_enter_DefaultMode_from_RESET();
     PBCFG_0_enter_DefaultMode_from_RESET();
     ADC_0_enter_DefaultMode_from_RESET();
     TIMER01_0_enter_DefaultMode_from_RESET();
@@ -224,12 +225,12 @@ extern void ADC_0_enter_DefaultMode_from_RESET(void) {
 
     // $[ADC0CF - ADC0 Configuration]
     /***********************************************************************
-     - SAR Clock Divider = 0x1F
+     - SAR Clock Divider = 0x06
      - ADC0 operates in 8-bit mode
      - The on-chip PGA gain is 1
      - Delayed Track Mode
      ***********************************************************************/
-    ADC0CF = (0x1F << ADC0CF_ADSC__SHIFT) | ADC0CF_AD8BE__8_BIT
+    ADC0CF = (0x06 << ADC0CF_ADSC__SHIFT) | ADC0CF_AD8BE__8_BIT
             | ADC0CF_ADGN__GAIN_1 | ADC0CF_ADTM__TRACK_DELAYED;
     // [ADC0CF - ADC0 Configuration]$
 
@@ -478,6 +479,19 @@ extern void PORTS_1_enter_DefaultMode_from_RESET(void) {
 
     // $[P1MAT - Port 1 Match]
     // [P1MAT - Port 1 Match]$
+
+}
+
+extern void PORTS_2_enter_DefaultMode_from_RESET(void) {
+    // $[P2 - Port 2 Pin Latch]
+    // [P2 - Port 2 Pin Latch]$
+
+    // $[P2MDOUT - Port 2 Output Mode]
+    /***********************************************************************
+     - P2.0 output is push-pull
+     ***********************************************************************/
+    P2MDOUT = P2MDOUT_B0__PUSH_PULL;
+    // [P2MDOUT - Port 2 Output Mode]$
 
 }
 

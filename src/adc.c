@@ -20,7 +20,7 @@ INTERRUPT_USING (ADC0EOC_ISR, ADC0EOC_IRQn, 3) {
 }
 
 
-void adc_service(msg) {
+void adc_service(char msg) {
     switch(msg) {
         case MSG_TICK:
             ADC0CN0_ADBUSY = 1;

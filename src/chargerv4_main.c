@@ -19,6 +19,7 @@
 #include "oversampling.h"
 #include "charger.h"
 #include "led.h"
+#include "reporting.h"
 #include "buffer.h"
 
 // $[Generated Includes]
@@ -82,7 +83,9 @@ int main (void)
       char msg = queue_get();
 
       if ( msg == MSG_EMPTY ) {
+          P2_B0 = 1;
           go_idle();
+          P2_B0 = 0;
       } else {
           clock_service(msg);
           if (msg == MSG_SECOND) {
@@ -93,6 +96,7 @@ int main (void)
           oversampling_service(msg);
           charger_service(msg);
           led_service(msg);
+          reporting_service(msg);
       }
 
   }                             
