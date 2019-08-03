@@ -28,5 +28,7 @@ void allocate_ready();
 
 #define P(str) allocate_pointer(str);allocate_ready();
 #define Pi(num) uitoa(num);allocate_ready();
+#define Ph(num) uitoh(num);allocate_ready();
+#define Pf(num) fptoa(num);allocate_ready();
 
 #endif /* BUFFER_H_ */

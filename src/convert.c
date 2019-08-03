@@ -28,60 +28,42 @@ char * uitoa(unsigned int v) {
     }
 }
 
-uint8_t * uitoh(uint16_t v) {
-    unsigned char pos = ring_buffer_pos;
-    unsigned char sz = 5;
-    ring_buffer_pos += sz;
-    if (ring_buffer_pos >= RING_BUFFER_SIZE) {
-        pos = 0;
-        ring_buffer_pos = sz;
-    }
-    {
-        uint8_t i = pos+sz-1;
-        uint8_t d;
-        ring_buffer[i--] = 0;
-        for (d = 4; d > 0; i--, d--) {
-            uint8_t digit = v % 16;
-            if (digit < 10) {
-                ring_buffer[i] = digit + '0';
-            } else {
-                ring_buffer[i] = digit-10 + 'A';
-            }
-            v /= 16;
-        };
-    }
-    return &ring_buffer[pos];
+char * uitoh(unsigned int v) {
+    char * buf = allocate_buffer(4);
+    char d;
+    if (buf == NULL) return NULL;
+    for (d = 3; d >= 0; d--) {
+        uint8_t digit = v % 16;
+        if (digit < 10) {
+            buf[d] = digit + '0';
+        } else {
+            buf[d] = digit-10 + 'A';
+        }
+        v /= 16;
+    };
+    return buf;
 }
 
 uint32_t accum;
 bit rounding;
 
-uint8_t * fptoa(uint16_t v) {
-    uint8_t pos = ring_buffer_pos;
+char * fptoa(unsigned int v) {
+    char * buf = allocate_buffer(6); // #.####
     uint16_t int_part = (v >> FRAC_BITS);
-    uint8_t sz = 7; // #.####
+    int8_t d;
+    if (buf == NULL) return NULL;
     accum = (v & FRAC_MASK);
     accum *= 10000;
     rounding = (accum & FRAC_MSB);
     accum /= FRAC_BASE;
     if (rounding) accum ++;
-    ring_buffer_pos += sz;
-    if (ring_buffer_pos >= RING_BUFFER_SIZE) {
-        pos = 0;
-        ring_buffer_pos = sz;
+    for (d = 5; d > 1; d--) {
+        buf[d] = (accum % 10) + '0';
+        accum /= 10;
     }
-    {
-        uint8_t i = pos+sz-1;
-        uint8_t d;
-        ring_buffer[i--] = 0;
-        for (d = 4; d > 0; d--, i--) {
-            ring_buffer[i] = (accum % 10) + '0';
-            accum /= 10;
-        }
-        ring_buffer[i--] = '.';
-        ring_buffer[i] = int_part + '0';
-    }
-    return &ring_buffer[pos];
+    buf[1] = '.';
+    buf[0] = int_part + '0';
+    return buf;
 }
 
 uint16_t ufixmult(uint16_t o1, uint16_t o2) {
