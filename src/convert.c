@@ -6,22 +6,21 @@
 #include "convert.h"
 
 char * uitoa(unsigned int v) {
-    unsigned char sz = 6;
+    unsigned char sz = 5;
     if (v < 10) {
-        sz = 2;
+        sz = 1;
     } else if (v < 100) {
-        sz = 3;
+        sz = 2;
     } else if (v < 1000) {
-        sz = 4;
+        sz = 3;
     } else if (v < 10000) {
-        sz = 5;
+        sz = 4;
     }
     {
         char * buf = allocate_buffer(sz);
-        char i = sz-1;
+        char i;
         if (buf == NULL) return NULL;
-        buf[i] = 0;
-        for (i--; i >= 0; i--) {
+        for (i = sz-1; i >= 0; i--) {
             buf[i] = (v % 10) + '0';
             v /= 10;
         }

@@ -21,6 +21,7 @@ void * allocate_buffer(uint8_t size) {
     if (buffer_tail == buffer_head) { // empty buffer, restart from top of buffer
         buffer_tail = 0;
         buffer_head = 0;
+        buffer_at = 0;
         buffer_ready_head = 0;
         buffer_end = BUFFER_SIZE;
     }
@@ -67,19 +68,21 @@ void allocate_ready() {
 }
 
 char get_next_byte() {
-    if (buffer_tail != buffer_ready_head || buffer_ready_full) {
+    while (buffer_tail != buffer_ready_head || buffer_ready_full) {
         uint8_t next_char = buffer[buffer_tail];
         if (next_char == SI_GPTR_MTYPE_DATA || next_char == SI_GPTR_MTYPE_XDATA || next_char == SI_GPTR_MTYPE_PDATA || next_char == SI_GPTR_MTYPE_CODE ) {
-            char * ptr_read = (SI_GENERIC_PTR*) &buffer[buffer_tail];
-            next_char = ptr_read[pointer_tail];
-            pointer_tail += 1;
-            if (ptr_read[pointer_tail] == 0) {
+            char ** ptr_read = (char*) &buffer[buffer_tail];
+            next_char = (*ptr_read)[pointer_tail];
+            if (next_char == 0) {
                 pointer_tail = 0;
-                buffer_tail += sizeof(SI_GENERIC_PTR);
+                buffer_tail += sizeof(char*);
                 if (buffer_tail == buffer_end) {
                     buffer_tail = 0;
                     buffer_end = BUFFER_SIZE;
                 }
+                continue;
+            } else {
+                pointer_tail += 1;
             }
         } else {
             buffer_tail += 1;

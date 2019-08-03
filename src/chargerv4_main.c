@@ -64,7 +64,7 @@ void go_idle(void) {
 int main (void)
 {
 
-  P("i\n");
+  P("Init\r\n");
 
   if (RSTSRC & RSTSRC_WDTRSF__BMASK) {
       P("wrst\r\n");

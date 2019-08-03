@@ -11,7 +11,7 @@
 #include <compiler_defs.h>
 #include <uart.h>
 
-#define BUFFER_SIZE 40
+#define BUFFER_SIZE 80
 extern SEG_IDATA uint8_t buffer[BUFFER_SIZE];
 extern uint8_t buffer_head;
 extern uint8_t buffer_tail;
