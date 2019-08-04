@@ -5,6 +5,12 @@
 #include "buffer.h"
 #include "convert.h"
 
+/*
+ * LX51 will give "L30: memory space overlap" warning, which should be ignored
+ */
+uint8_t data R5 _at_ 0x5;
+uint8_t remainder;
+
 char * uitoa(unsigned int v) {
     unsigned char sz = 5;
     if (v < 10) {
@@ -21,8 +27,12 @@ char * uitoa(unsigned int v) {
         char i;
         if (buf == NULL) return NULL;
         for (i = sz-1; i >= 0; i--) {
-            buf[i] = (v % 10) + '0';
+            /*
+             * See explanation in fptoa() below how this works
+             */
             v /= 10;
+            remainder = R5;
+            buf[i] = remainder + '0';
         }
         return buf;
     }
@@ -46,14 +56,12 @@ char * uitoh(unsigned int v) {
 
 uint32_t accum;
 bit rounding;
-uint8_t data R5 _at_ 0x5;
 
 char * fptoa(unsigned int v) {
     char * buf = allocate_buffer(6); // #.####
     uint16_t int_part = (v >> FRAC_BITS);
     uint16_t frac_part;
     int8_t d;
-    uint8_t remainder;
     if (buf == NULL) return NULL;
     accum = (v & FRAC_MASK);
     accum *= 10000;
@@ -62,6 +70,8 @@ char * fptoa(unsigned int v) {
     /*
      * 16 most significant bits are 0, so we don't need to waste time performing
      * 32-bit division when converting to decimal string
+     *
+     * This reduces computation time from 254uS to 52 uS
      */
     frac_part = accum;
     if (rounding) frac_part ++;
@@ -80,7 +90,8 @@ char * fptoa(unsigned int v) {
          * and remainder in R4-R5. Because the divisor is less than 256, remainder
          * will always fit in one byte.
          *
-         * LX51 linker will complain L30: memory space overlap, which should be ignored
+         * This further reduces computation time from 52uS to 27uS.
+         *
          */
         frac_part /= 10;
         remainder = R5;
