@@ -5,7 +5,7 @@
  *      Author: denis
  */
 
-#include <SI_C8051F850_Register_Enums.h>                  // SFR declarations
+#include <compiler_defs.h>
 #include "msg_codes.h"
 #include "oversampling.h"
 #include "uart.h"
