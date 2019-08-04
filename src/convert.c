@@ -1,7 +1,6 @@
 
 // Program Size: data=187.5 xdata=0 const=0 code=5238
 
-#include <SI_C8051F850_Register_Enums.h>                  // SFR declarations
 #include "buffer.h"
 #include "convert.h"
 
@@ -75,7 +74,6 @@ char * fptoa(unsigned int v) {
      */
     frac_part = accum;
     if (rounding) frac_part ++;
-    P2_B0 = 0;
     for (d = 5; d > 1; d--) {
         /*
          * This is the usual way of converting binary to decimal text, using two
@@ -97,7 +95,6 @@ char * fptoa(unsigned int v) {
         remainder = R5;
         buf[d] = remainder + '0';
     }
-    P2_B0 = 1;
     buf[1] = '.';
     buf[0] = int_part + '0';
     return buf;
