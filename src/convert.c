@@ -1,9 +1,14 @@
 
 // Program Size: data=187.5 xdata=0 const=0 code=5238
 
-#include <compiler_defs.h>
 #include "buffer.h"
 #include "convert.h"
+
+/*
+ * LX51 will give "L30: memory space overlap" warning, which should be ignored
+ */
+uint8_t data R5 _at_ 0x5;
+uint8_t remainder;
 
 char * uitoa(unsigned int v) {
     unsigned char sz = 5;
@@ -21,8 +26,12 @@ char * uitoa(unsigned int v) {
         char i;
         if (buf == NULL) return NULL;
         for (i = sz-1; i >= 0; i--) {
-            buf[i] = (v % 10) + '0';
+            /*
+             * See explanation in fptoa() below how this works
+             */
             v /= 10;
+            remainder = R5;
+            buf[i] = remainder + '0';
         }
         return buf;
     }
@@ -50,16 +59,41 @@ bit rounding;
 char * fptoa(unsigned int v) {
     char * buf = allocate_buffer(6); // #.####
     uint16_t int_part = (v >> FRAC_BITS);
+    uint16_t frac_part;
     int8_t d;
     if (buf == NULL) return NULL;
     accum = (v & FRAC_MASK);
     accum *= 10000;
     rounding = (accum & FRAC_MSB);
     accum /= FRAC_BASE;
-    if (rounding) accum ++;
+    /*
+     * 16 most significant bits are 0, so we don't need to waste time performing
+     * 32-bit division when converting to decimal string
+     *
+     * This reduces computation time from 254uS to 52 uS
+     */
+    frac_part = accum;
+    if (rounding) frac_part ++;
     for (d = 5; d > 1; d--) {
-        buf[d] = (accum % 10) + '0';
-        accum /= 10;
+        /*
+         * This is the usual way of converting binary to decimal text, using two
+         * divisions:
+         *
+         * buf[d] = (frac_part % 10) + '0';
+         * frac_part /= 10;
+         *
+         * Optimizing one division away
+         * making use of the fact that both quotient and remainder are calculated
+         * by the same library function, ?C?UIDIV, which returns quotient in R6-R7,
+         * and remainder in R4-R5. Because the divisor is less than 256, remainder
+         * will always fit in one byte.
+         *
+         * This further reduces computation time from 52uS to 27uS.
+         *
+         */
+        frac_part /= 10;
+        remainder = R5;
+        buf[d] = remainder + '0';
     }
     buf[1] = '.';
     buf[0] = int_part + '0';
