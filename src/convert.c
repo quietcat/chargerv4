@@ -1,7 +1,7 @@
 
 // Program Size: data=187.5 xdata=0 const=0 code=5238
 
-#include <compiler_defs.h>
+#include <SI_C8051F850_Register_Enums.h>                  // SFR declarations
 #include "buffer.h"
 #include "convert.h"
 
@@ -46,21 +46,47 @@ char * uitoh(unsigned int v) {
 
 uint32_t accum;
 bit rounding;
+uint8_t data R5 _at_ 0x5;
 
 char * fptoa(unsigned int v) {
     char * buf = allocate_buffer(6); // #.####
     uint16_t int_part = (v >> FRAC_BITS);
+    uint16_t frac_part;
     int8_t d;
+    uint8_t remainder;
     if (buf == NULL) return NULL;
     accum = (v & FRAC_MASK);
     accum *= 10000;
     rounding = (accum & FRAC_MSB);
     accum /= FRAC_BASE;
-    if (rounding) accum ++;
+    /*
+     * 16 most significant bits are 0, so we don't need to waste time performing
+     * 32-bit division when converting to decimal string
+     */
+    frac_part = accum;
+    if (rounding) frac_part ++;
+    P2_B0 = 0;
     for (d = 5; d > 1; d--) {
-        buf[d] = (accum % 10) + '0';
-        accum /= 10;
+        /*
+         * This is the usual way of converting binary to decimal text, using two
+         * divisions:
+         *
+         * buf[d] = (frac_part % 10) + '0';
+         * frac_part /= 10;
+         *
+         * Optimizing one division away
+         * making use of the fact that both quotient and remainder are calculated
+         * by the same library function, ?C?UIDIV, which returns quotient in R6-R7,
+         * and remainder in R4-R5. Because the divisor is less than 256, remainder
+         * will always fit in one byte.
+         *
+         * LX51 linker will complain L30: memory space overlap, which should be ignored
+         */
+        frac_part /= 10;
+        remainder = R5;
+        buf[d] = remainder + '0';
     }
+    P2_B0 = 1;
     buf[1] = '.';
     buf[0] = int_part + '0';
     return buf;

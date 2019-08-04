@@ -83,9 +83,9 @@ int main (void)
       char msg = queue_get();
 
       if ( msg == MSG_EMPTY ) {
-          P2_B0 = 1;
+//          P2_B0 = 1;
           go_idle();
-          P2_B0 = 0;
+//          P2_B0 = 0;
       } else {
           clock_service(msg);
           if (msg == MSG_SECOND) {
