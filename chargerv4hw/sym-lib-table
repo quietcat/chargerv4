@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name chargerv4hw-rescue)(type Legacy)(uri ${KIPRJMOD}/chargerv4hw-rescue.lib)(options "")(descr ""))
+)
